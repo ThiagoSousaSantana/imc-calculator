@@ -13,9 +13,9 @@ import java.io.IOException;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-  private JWTUtil jwtUtil;
+  private final JWTUtil jwtUtil;
 
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
   public JWTAuthenticationFilter(JWTUtil jwtUtil, UserRepository userRepository) {
     this.jwtUtil = jwtUtil;
@@ -49,6 +49,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
       return null;
     }
-    return token.substring(7, token.length());
+    return token.substring(7);
   }
 }

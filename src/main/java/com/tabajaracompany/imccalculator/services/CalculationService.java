@@ -7,6 +7,7 @@ import com.tabajaracompany.imccalculator.models.IMC;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class CalculationService {
@@ -20,6 +21,6 @@ public class CalculationService {
     }
 
     private BigDecimal calculate(BigDecimal altura, BigDecimal peso) {
-        return peso.divide(altura.multiply(altura));
+        return peso.divide(altura.pow(2), RoundingMode.HALF_EVEN);
     }
 }
