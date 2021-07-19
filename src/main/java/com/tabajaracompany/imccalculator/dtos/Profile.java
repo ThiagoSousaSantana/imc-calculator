@@ -1,4 +1,4 @@
-package com.tabajaracompany.imccalculator.models;
+package com.tabajaracompany.imccalculator.dtos;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,7 +1,7 @@
 package com.tabajaracompany.imccalculator.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tabajaracompany.imccalculator.models.dto.LoginDto;
+import com.tabajaracompany.imccalculator.models.LoginDto;
 import org.apache.catalina.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

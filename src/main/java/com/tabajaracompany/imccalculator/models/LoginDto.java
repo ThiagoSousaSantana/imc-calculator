@@ -1,4 +1,4 @@
-package com.tabajaracompany.imccalculator.models.dto;
+package com.tabajaracompany.imccalculator.models;
 
 import lombok.Data;
 
