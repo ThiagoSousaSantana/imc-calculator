@@ -1,12 +1,14 @@
 package com.tabajaracompany.imccalculator.security;
 
-import io.jsonwebtoken.Claims;
+import com.tabajaracompany.imccalculator.models.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JWTUtil {
@@ -15,43 +17,28 @@ public class JWTUtil {
 
   private Long expiration = 86400000l;
 
-  public String generateToken(String userName) {
+  public String generateToken(Authentication authentication) {
+    var user = (User) authentication.getPrincipal();
     return Jwts.builder()
-        .setSubject(userName)
+        .setIssuer("tabajaracompany")
+        .setSubject(user.getId().toString())
+        .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(SignatureAlgorithm.ES512, jwtSecret.getBytes(StandardCharsets.UTF_8))
+        .signWith(SignatureAlgorithm.HS256, jwtSecret)
         .compact();
   }
 
   public boolean tokenValid(String token) {
-    var claims = getClaims(token);
-    if (claims != null) {
-      var userName = claims.getSubject();
-      var expirationDate = claims.getExpiration();
-      var now = new Date(System.currentTimeMillis());
-      if (userName != null && expirationDate != null && now.before(expirationDate)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private Claims getClaims(String token) {
     try {
-      return Jwts.parser()
-          .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
-          .parseClaimsJws(token)
-          .getBody();
+      Jwts.parser().setSigningKey(this.jwtSecret).parseClaimsJws(token);
+      return true;
     } catch (Exception e) {
-      return null;
+      return false;
     }
   }
 
-  public String getUsername(String token) {
-    var claims = getClaims(token);
-    if (claims != null) {
-      return claims.getSubject();
-    }
-    return null;
+  public UUID getIdUser(String token) {
+    var claims = Jwts.parser().setSigningKey(this.jwtSecret).parseClaimsJws(token).getBody();
+    return UUID.fromString(claims.getSubject());
   }
 }

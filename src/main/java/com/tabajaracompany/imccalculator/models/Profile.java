@@ -1,6 +1,7 @@
-package com.tabajaracompany.imccalculator.dtos;
+package com.tabajaracompany.imccalculator.models;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
@@ -11,13 +12,21 @@ import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Profile implements GrantedAuthority {
 
+  private static final long serialVersionUID = 1L;
+
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private UUID id;
 
   private String name;
+
+  public Profile(String name) {
+    this.id = UUID.randomUUID();
+    this.name = name;
+  }
+
 
   @Override
   public String getAuthority() {

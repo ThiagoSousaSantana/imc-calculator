@@ -1,5 +1,6 @@
-package com.tabajaracompany.imccalculator.dtos;
+package com.tabajaracompany.imccalculator.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,11 +29,16 @@ public class User implements UserDetails {
 
   private String password;
 
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.EAGER)
   private List<Profile> profile = new ArrayList<>();
 
   public void generateId() {
     this.id = UUID.randomUUID();
+  }
+
+  public void addProfile(){
+    this.profile.add(new Profile("USER"));
   }
 
 

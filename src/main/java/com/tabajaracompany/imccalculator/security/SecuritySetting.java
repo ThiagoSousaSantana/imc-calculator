@@ -1,18 +1,21 @@
 package com.tabajaracompany.imccalculator.security;
 
+import com.tabajaracompany.imccalculator.repository.UserRepository;
+import com.tabajaracompany.imccalculator.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,11 +27,19 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecuritySetting extends WebSecurityConfigurerAdapter {
 
-  private static final String[] PUBLIC_MATCHERS_POST = {"/user/**", "/auth/forgot/**"};
+  private static final String[] PUBLIC_MATCHERS_POST = {"/user/**", "/auth"};
+  private static final String[] PUBLIC_MATCHERS = {"/h2-console/**"};
 
   @Autowired private Environment environment;
-  @Autowired private UserDetailsService userDetailsService;
+  @Autowired private UserDetailsServiceImpl userDetailsService;
   @Autowired private JWTUtil jwtUtil;
+  @Autowired private UserRepository userRepository;
+
+  @Override
+  @Bean
+  protected AuthenticationManager authenticationManager() throws Exception {
+    return super.authenticationManager();
+  }
 
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -37,17 +48,23 @@ public class SecuritySetting extends WebSecurityConfigurerAdapter {
       httpSecurity.headers().frameOptions().disable();
     }
 
-    httpSecurity.cors().and().csrf().disable();
     httpSecurity
         .authorizeRequests()
         .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST)
         .permitAll()
+        .antMatchers(PUBLIC_MATCHERS)
+        .permitAll()
         .anyRequest()
-        .authenticated();
-    httpSecurity.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
-    httpSecurity.addFilter(
-        new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
-    httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        .authenticated()
+        .and()
+        .csrf()
+        .disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilterBefore(
+            new JWTAuthenticationFilter(jwtUtil, userRepository),
+                UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
