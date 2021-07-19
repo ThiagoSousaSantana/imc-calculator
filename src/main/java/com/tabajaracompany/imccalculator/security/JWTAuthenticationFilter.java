@@ -45,7 +45,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private String recoverToken(HttpServletRequest request) {
-    var token = request.getHeader("Authorizationc");
+    var token = request.getHeader("Authorization");
     if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
       return null;
     }
