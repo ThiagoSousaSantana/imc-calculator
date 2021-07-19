@@ -1,6 +1,6 @@
 package com.tabajaracompany.imccalculator.services;
 
-import com.tabajaracompany.imccalculator.models.User;
+import com.tabajaracompany.imccalculator.models.UserIMC;
 import com.tabajaracompany.imccalculator.repository.UserRepository;
 import com.tabajaracompany.imccalculator.security.SecuritySetting;
 import org.hibernate.ObjectNotFoundException;
@@ -16,13 +16,13 @@ public class UserService {
 
   @Autowired private UserRepository userRepository;
 
-  public User insertUser(User user){
-    user.generateId();
-    user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
-    return userRepository.save(user);
+  public UserIMC insertUser(UserIMC userIMC){
+    userIMC.generateId();
+    userIMC.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(userIMC.getPassword()));
+    return userRepository.save(userIMC);
   }
 
-  public User findByUser(UUID id){
+  public UserIMC findByUser(UUID id){
     return userRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException(id, "User"));
   }

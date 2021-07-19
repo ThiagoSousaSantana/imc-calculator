@@ -1,12 +1,11 @@
 package com.tabajaracompany.imccalculator.security;
 
-import com.tabajaracompany.imccalculator.models.User;
+import com.tabajaracompany.imccalculator.models.UserIMC;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +17,7 @@ public class JWTUtil {
   private Long expiration = 86400000l;
 
   public String generateToken(Authentication authentication) {
-    var user = (User) authentication.getPrincipal();
+    var user = (UserIMC) authentication.getPrincipal();
     return Jwts.builder()
         .setIssuer("tabajaracompany")
         .setSubject(user.getId().toString())
