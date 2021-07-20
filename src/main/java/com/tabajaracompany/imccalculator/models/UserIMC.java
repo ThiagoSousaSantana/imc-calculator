@@ -18,8 +18,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 public class UserIMC implements UserDetails {
 
-  @Id
-  private UUID id;
+  @Id private UUID id;
 
   private String name;
 
@@ -29,9 +28,11 @@ public class UserIMC implements UserDetails {
 
   private String password;
 
-  @Transient
+  @Transient @JsonIgnore private List<GrantedAuthority> profile = new ArrayList<>();
+
   @JsonIgnore
-  private List<GrantedAuthority> profile = new ArrayList<>();
+  @OneToMany(mappedBy = "userIMC")
+  private List<ImcData> imcDataList = new ArrayList<>();
 
   public void generateId() {
     this.id = UUID.randomUUID();

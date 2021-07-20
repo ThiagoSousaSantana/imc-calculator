@@ -27,7 +27,7 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecuritySetting extends WebSecurityConfigurerAdapter {
 
-  private static final String[] PUBLIC_MATCHERS_POST = {"/user/**", "/auth"};
+  private static final String[] PUBLIC_MATCHERS_POST = {"/user/**", "/calculation", "/auth"};
   private static final String[] PUBLIC_MATCHERS = {"/h2-console/**"};
 
   @Autowired private Environment environment;
@@ -64,7 +64,7 @@ public class SecuritySetting extends WebSecurityConfigurerAdapter {
         .and()
         .addFilterBefore(
             new JWTAuthenticationFilter(jwtUtil, userRepository),
-                UsernamePasswordAuthenticationFilter.class);
+            UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
