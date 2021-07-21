@@ -1,20 +1,22 @@
 package com.tabajaracompany.imccalculator.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tabajaracompany.imccalculator.dtos.UserRequest;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class UserIMC implements UserDetails {
 
@@ -28,14 +30,23 @@ public class UserIMC implements UserDetails {
 
   private String password;
 
-  @Transient @JsonIgnore private List<GrantedAuthority> profile = new ArrayList<>();
+  @Transient @JsonIgnore private List<GrantedAuthority> profile;
 
   @JsonIgnore
   @OneToMany(mappedBy = "userIMC")
-  private List<ImcData> imcDataList = new ArrayList<>();
+  private List<ImcData> imcDataList;
 
   public void generateId() {
     this.id = UUID.randomUUID();
+  }
+
+  public UserIMC(UserIMC userIMC, UserRequest userRequest) {
+    this.id = userIMC.getId();
+    this.name = userRequest.getName();
+    this.email = userRequest.getEmail();
+    this.password = userRequest.getPassword();
+    this.profile = userIMC.getProfile();
+    this.imcDataList = userIMC.getImcDataList();
   }
 
   @Override

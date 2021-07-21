@@ -33,8 +33,21 @@ public class UserController {
     return ResponseEntity.created(uri).body(response);
   }
 
+  @PutMapping("/{userId}")
+  public ResponseEntity<UserResponse> updateUser(
+      @RequestBody UserRequest userRequest, @PathVariable UUID userId) {
+    var user = userService.updateUser(userId, userRequest);
+    return ResponseEntity.ok(userMapper.convertToResponse(user));
+  }
+
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+    userService.deleteUser(userId);
+    return ResponseEntity.ok().build();
+  }
+
   @GetMapping("/{userId}")
-  public ResponseEntity<UserResponse> findbyIdUser(@PathVariable UUID userId){
+  public ResponseEntity<UserResponse> findbyIdUser(@PathVariable UUID userId) {
     var user = userService.findByUser(userId);
     return ResponseEntity.ok(userMapper.convertToResponse(user));
   }
